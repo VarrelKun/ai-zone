@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+  <link rel="stylesheet" href="./css/styles.css" />
+  <title>Image Enhancer</title>
+  <style>
+    /* Dark Mode Styling */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #181818;
+      color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      color: #ffffff;
+    }
+
+    /* Navbar Styling */
+    nav {
+      background-color: #4F0808;
+      padding: 10px 0;
+      position: sticky;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    nav ul li {
+      margin: 0 15px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      font-size: 18px;
+      padding: 8px 16px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    nav ul li a:hover {
+      background-color: #555;
+    }
+
+    .container {
+      width: 80%;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .drop-container {
+      position: relative;
+      display: flex;
+      gap: 10px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+      padding: 20px;
+      border-radius: 10px;
+      border: 2px dashed #555;
+      color: #bbb;
+      cursor: pointer;
+      transition: background .2s ease-in-out, border .2s ease-in-out;
+      background-color: #282828;
+    }
+
+    .drop-container:hover {
+      background: #333;
+      border-color: #888;
+    }
+
+    .drop-title {
+      color: #bbb;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      transition: color .2s ease-in-out;
+    }
+
+    button {
+      background-color: #4F0808;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #CB0F0F;
+    }
+
+    /* Modal Styling */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #282828;
+      padding: 20px;
+      border-radius: 5px;
+      width: 80%;
+      max-width: 500px;
+      color: white;
+      text-align: center;
+    }
+
+    .close-btn {
+      color: white;
+      background-color: #CB0F0F;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      border: none;
+    }
+
+    .close-btn:hover {
+      background-color: #4F0808;
+    }
+
+    .loader {
+      display: none;
+      position: relative;
+      margin-top: 20px;
+    }
+
+    /* Loading spinner styles */
+    .jimu-primary-loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .jimu-primary-loading:before,
+    .jimu-primary-loading:after {
+      position: absolute;
+      top: 0;
+      content: '';
+      background: #076fe5;
+      width: 13.6px;
+      height: 32px;
+      animation: loading-keys-app-loading 0.8s infinite ease-in-out;
+    }
+
+    .jimu-primary-loading:before {
+      left: -19.992px;
+    }
+
+    .jimu-primary-loading:after {
+      left: 19.992px;
+      animation-delay: 0.32s;
+    }
+
+    @keyframes loading-keys-app-loading {
+      0%, 80%, 100% {
+        opacity: 0.75;
+        height: 32px;
+      }
+      40% {
+        opacity: 1;
+        height: 40px;
+      }
+    }
+    /* Animasi untuk popup modal menggunakan transform */
+@keyframes transformIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px); /* Modal muncul dari bawah */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); /* Modal berada di posisi normal */
+  }
+}
+
+@keyframes transformOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0); /* Modal berada di posisi normal */
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px); /* Modal bergerak ke atas dan menghilang */
+  }
+}
+
+/* Modal Styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  justify-content: center;
+  align-items: center;
+  animation: transformIn 0.5s ease-out; /* Animasi transformIn saat muncul */
+}
+
+/* Ketika modal ditutup */
+.modal.fade-out {
+  animation: transformOut 0.5s ease-out forwards; /* Animasi transformOut saat ditutup */
+}
+
+/* Konten Modal */
+.modal-content {
+  background-color: #282828;
+  padding: 20px;
+  border-radius: 5px;
+  width: 80%;
+  max-width: 500px;
+  color: white;
+  text-align: center;
+}
+
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <ul>
+      <li><a href="https://redzone.web.id">Gallery</a></li>
+      <li><a href="/zoneimg">Zoneimg</a></li>
+    </ul>
+  </nav>
+
+  <h1>Redzöne Enhancer</h1>
+
+  <div class="container">
+    <form id="uploadForm" enctype="multipart/form-data">
+      <label for="file" class="drop-container" id="dropcontainer">
+        <span class="drop-title">Drop files here</span>
+        or
+        <input type="file" name="file" required id="fileInput">
+        <button type="submit" id="enhanceBtn">Enhance</button>
+      </label>
+    </form>
+    
+    <div class="result" id="resultDiv">
+      <!-- Hasil gambar yang ditingkatkan akan tampil di sini -->
+    </div>
+
+    <!-- Spinner loading -->
+    <div class="loader" id="loadingDiv">
+      <div class="jimu-primary-loading"></div>
+    </div>
+  </div>
+
+  <!-- Popup Modal -->
+  <div id="popupModal" class="modal">
+    <div class="modal-content">
+      <h2>Welcome to AIzöne!</h2>
+      <img src="https://files.catbox.moe/ajofxi.png" width="150" height="150" alt="Rboyz icon">
+      <p>Gunain platform ini dengan bijak y nyet!</p>
+      <button class="close-btn" id="closeModalBtn">Close</button>
+    </div>
+  </div>
+
+  <script>
+    // Display the popup modal on page load
+    // Display the popup modal on page load
+window.onload = function() {
+  const modal = document.getElementById('popupModal');
+  modal.style.display = 'flex'; // Show the modal
+  modal.classList.remove('fade-out'); // Ensure fadeOut animation is reset
+};
+
+// Close the popup when user clicks on the close button
+document.getElementById('closeModalBtn').addEventListener('click', function() {
+  const modal = document.getElementById('popupModal');
+  modal.classList.add('fade-out'); // Trigger fadeOut animation
+  // Menunggu animasi selesai sebelum menyembunyikan modal
+  setTimeout(function() {
+    modal.style.display = 'none';
+  }, 500); // Sesuaikan durasi ini dengan durasi animasi fadeOut
+});
+
+
+    // Menangani form submission menggunakan AJAX
+    document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+      e.preventDefault(); // Mencegah reload halaman
+
+      const formData = new FormData();
+      const fileInput = document.getElementById('fileInput');
+      const enhanceBtn = document.getElementById('enhanceBtn');
+
+      // Memastikan file dipilih
+      if (fileInput.files.length === 0) {
+        alert("Pilih file gambar terlebih dahulu.");
+        return;
+      }
+
+      formData.append('file', fileInput.files[0]);
+
+      // Menampilkan animasi loading
+      document.getElementById('loadingDiv').style.display = 'block';
+
+      // Menyembunyikan tombol Enhance setelah diklik
+      enhanceBtn.style.display = 'none';
+
+      try {
+        // Kirimkan data ke server menggunakan AJAX (fetch)
+        const response = await fetch('/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error('Terjadi kesalahan saat mengunggah gambar.');
+        }
+
+        const result = await response.json();
+        
+        if (result.success && result.enhancedImageUrl) {
+          // Tampilkan gambar yang sudah diproses
+          const resultDiv = document.getElementById('resultDiv');
+          resultDiv.innerHTML = `
+            <h3>Result:</h3>
+            <img src="${result.enhancedImageUrl}" alt="Enhanced Image" id="enhancedImage">
+            <br>
+            <a href="${result.enhancedImageUrl}" download="enhanced_redzone.jpg" class="back-link">Download Gambar</a>
+          `;
+        } else {
+          throw new Error('Gambar tidak dapat diproses.');
+        }
+      } catch (error) {
+        alert('Error: ' + error.message);
+      } finally {
+        // Sembunyikan animasi loading setelah proses selesai
+        document.getElementById('loadingDiv').style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
