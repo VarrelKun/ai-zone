@@ -119,6 +119,8 @@ app.get('/rzone', async (req, res) => {
 });
 
 // Jalankan server
-app.listen(port, () => {
-  console.log(`Server berjalan di http://localhost:${port}`);
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
 });
+
+module.exports = app;
