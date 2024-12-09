@@ -329,7 +329,7 @@ document.getElementById('closeModalBtn').addEventListener('click', function() {
 
       try {
         // Kirimkan data ke server menggunakan AJAX (fetch)
-        const response = await fetch('/upload', {
+        const response = await fetch('/api/upload', {
           method: 'POST',
           body: formData
         });
