@@ -48,7 +48,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     console.log('URL dari Catbox:', catboxUrl);
 
     // Panggil API eksternal
-    const enhanceUrl = `https://api.ryzendesu.vip/api/ai/remini?url=${encodeURIComponent(catboxUrl)}`;
+    const enhanceUrl = `https://api.ryzendesu.vip/api/ai/upscaler?url=${encodeURIComponent(catboxUrl)}`;
     const enhanceResponse = await axios.get(enhanceUrl, {
       responseType: 'arraybuffer',
       headers: { 'User-Agent': 'Mozilla/5.0' },
