@@ -1,20 +1,13 @@
 const express = require('express');
 const axios = require('axios');
-const path = require('path');
-const fs = require('fs');
 const multer = require('multer');
 const FormData = require('form-data');
 
 const app = express();
 const port = 3000;
 
-// Setup Multer untuk file upload
+// Setup Multer untuk file upload (menggunakan memory storage)
 const upload = multer({ storage: multer.memoryStorage() });
-
-// Buat folder tmp jika belum ada
-if (!fs.existsSync('tmp')) {
-  fs.mkdirSync('tmp');
-}
 
 // Middleware untuk menangani permintaan JSON dan form-data
 app.use(express.json());
@@ -35,18 +28,15 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     return res.status(400).send('No file uploaded.');
   }
 
-  const filePath = path.join(__dirname, 'tmp', req.file.filename);
   try {
     // Upload ke Catbox
     const catboxForm = new FormData();
     catboxForm.append('reqtype', 'fileupload');
-    catboxForm.append('fileToUpload', fs.createReadStream(filePath));
+    catboxForm.append('fileToUpload', req.file.buffer, req.file.originalname);
 
     const catboxResponse = await axios.post('https://catbox.moe/user/api.php', catboxForm, {
       headers: catboxForm.getHeaders(),
     });
-
-    fs.unlinkSync(filePath); // Hapus file setelah upload
 
     if (!catboxResponse.data || !catboxResponse.data.includes('http')) {
       throw new Error('Gagal upload ke Catbox.');
@@ -83,9 +73,9 @@ app.get('/rzone', async (req, res) => {
   try {
     console.log(`Mengirim permintaan ke API eksternal dengan text: ${text}`);
     const response = await axios.get(`https://love.neekoi.me/kivotos`, {
-      params: { text }, // Kirim parameter `text`
+      params: { text },
       responseType: 'arraybuffer',
-      timeout: 100000, // Timeout 100 detik
+      timeout: 100000,
       headers: { 'User-Agent': 'Mozilla/5.0' },
     });
 
