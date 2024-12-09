@@ -9,16 +9,7 @@ const app = express();
 const port = 3000;
 
 // Setup Multer untuk file upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'tmp/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({ storage: storage });
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Buat folder tmp jika belum ada
 if (!fs.existsSync('tmp')) {
