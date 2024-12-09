@@ -275,7 +275,7 @@
 
       try {
         // Kirimkan permintaan ke rute /rzone dengan parameter teks
-        const response = await fetch(`/rzone?text=${encodeURIComponent(textInput)}`);
+        const response = await fetch(`/api/rzone?text=${encodeURIComponent(textInput)}`);
 
         if (!response.ok) {
           throw new Error('Terjadi kesalahan saat mengambil gambar.');
