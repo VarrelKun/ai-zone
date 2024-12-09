@@ -1,20 +1,35 @@
 const express = require('express');
-const multer = require('multer');
 const axios = require('axios');
-const FormData = require('form-data');
 const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
+const FormData = require('form-data');
 
 const app = express();
-const upload = multer({ storage: multer.memoryStorage() });
+const port = 3000;
+
+// Setup Multer untuk file upload
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'tmp/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// Buat folder tmp jika belum ada
+if (!fs.existsSync('tmp')) {
+  fs.mkdirSync('tmp');
+}
 
 // Middleware untuk menangani permintaan JSON dan form-data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve file statis dari folder "public"
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Route untuk halaman utama
+// Serve halaman HTML (pastikan file public/index.html ada)
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -23,58 +38,50 @@ app.get('/zoneimg', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'zone.html'));
 });
 
-// Route untuk upload file
+// Endpoint untuk file upload dan memproses gambar
 app.post('/upload', upload.single('file'), async (req, res) => {
   if (!req.file) {
-    return res.status(400).json({ success: false, message: 'No file uploaded.' });
+    return res.status(400).send('No file uploaded.');
   }
 
-  let catboxUrl = '';
+  const filePath = path.join(__dirname, 'tmp', req.file.filename);
   try {
-    // Upload file ke Catbox
+    // Upload ke Catbox
     const catboxForm = new FormData();
     catboxForm.append('reqtype', 'fileupload');
-    catboxForm.append('fileToUpload', req.file.buffer, {
-      filename: req.file.originalname,
-      contentType: req.file.mimetype,
-    });
+    catboxForm.append('fileToUpload', fs.createReadStream(filePath));
 
     const catboxResponse = await axios.post('https://catbox.moe/user/api.php', catboxForm, {
       headers: catboxForm.getHeaders(),
     });
 
+    fs.unlinkSync(filePath); // Hapus file setelah upload
+
     if (!catboxResponse.data || !catboxResponse.data.includes('http')) {
-      throw new Error('Gagal meng-upload file ke Catbox.');
+      throw new Error('Gagal upload ke Catbox.');
     }
 
-    catboxUrl = catboxResponse.data.trim();
+    const catboxUrl = catboxResponse.data.trim();
     console.log('URL dari Catbox:', catboxUrl);
 
-    // Kirim URL Catbox ke API eksternal
+    // Panggil API eksternal
     const enhanceUrl = `https://api.ryzendesu.vip/api/ai/remini?url=${encodeURIComponent(catboxUrl)}`;
-    console.log('Mengirim permintaan ke API eksternal:', enhanceUrl);
-
     const enhanceResponse = await axios.get(enhanceUrl, {
       responseType: 'arraybuffer',
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; MyApp/1.0)' },
-      timeout: 70000, // Timeout 70 detik
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+      timeout: 70000,
     });
 
-    // Mengirim gambar dalam bentuk base64
     const enhancedImageUrl = `data:image/jpeg;base64,${Buffer.from(enhanceResponse.data).toString('base64')}`;
 
-    res.json({
-      success: true,
-      enhancedImageUrl: enhancedImageUrl,
-    });
-
+    res.json({ success: true, enhancedImageUrl: enhancedImageUrl });
   } catch (error) {
-    console.error('Error saat memproses gambar:', error.message);
+    console.error('Error:', error.message);
     res.status(500).json({ success: false, message: 'Gagal memproses gambar.' });
   }
 });
 
-// Route untuk rzone
+// Endpoint untuk memanggil API eksternal
 app.get('/rzone', async (req, res) => {
   const text = req.query.text;
 
@@ -83,25 +90,32 @@ app.get('/rzone', async (req, res) => {
   }
 
   try {
-    const response = await axios.get(`https://love.neekoi.me/kivotos?text=${encodeURIComponent(text)}`, {
+    console.log(`Mengirim permintaan ke API eksternal dengan text: ${text}`);
+    const response = await axios.get(`https://love.neekoi.me/kivotos`, {
+      params: { text }, // Kirim parameter `text`
       responseType: 'arraybuffer',
+      timeout: 100000, // Timeout 100 detik
+      headers: { 'User-Agent': 'Mozilla/5.0' },
     });
 
     res.set('Content-Type', 'image/jpeg');
     res.send(response.data);
-
   } catch (error) {
     console.error('Error saat memanggil API eksternal:', error.message);
+    if (error.response) {
+      console.error('Status API eksternal:', error.response.status);
+      console.error('Data API eksternal:', error.response.data);
+    }
     res.status(500).json({ success: false, message: 'Gagal mendapatkan gambar dari API eksternal.' });
   }
 });
 
-// Mulai server jika berjalan di lokal
-if (require.main === module) {
-  const port = process.env.PORT || 3000;
+// Jalankan server (untuk lokal)
+if (process.env.NODE_ENV !== 'production') {
   app.listen(port, () => {
     console.log(`Server berjalan di http://localhost:${port}`);
   });
 }
 
+// Ekspor app untuk Vercel
 module.exports = app;
