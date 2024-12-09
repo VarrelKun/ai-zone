@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="./css/styles.css" />
-  <title>Text To Image</title>
   <style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
     /* Dark Mode Styling */
     body {
       font-family: Arial, sans-serif;
@@ -17,6 +16,7 @@
 
     h1 {
       text-align: center;
+      font-family: "Montserrat", sans-serif;
       margin-top: 20px;
       color: #ffffff;
     }
@@ -45,6 +45,7 @@
 
     nav ul li a {
       text-decoration: none;
+      font-family: "Montserrat", sans-serif;
       color: white;
       font-size: 18px;
       padding: 8px 16px;
@@ -128,75 +129,39 @@
 
     /* Animasi loading */
     .loader {
-      display: none;
-      position: relative;
-      margin-top: 20px;
-    }
+  display: none;
+  --height-of-loader: 4px;
+  --loader-color: #0071e2;
+  width: 130px;
+  height: var(--height-of-loader);
+  border-radius: 30px;
+  background-color: rgba(0, 0, 0, 0.2);
+  position: relative; /* Ubah ke relative */
+  margin: 20px auto 0; /* Berikan jarak dengan margin */
+}
 
-    .jimu-primary-loading:before,
-    .jimu-primary-loading:after {
-      position: absolute;
-      top: 0;
-      content: '';
-    }
+.loader::before {
+  content: "";
+  position: absolute;
+  background: var(--loader-color);
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  border-radius: 30px;
+  animation: moving 1s ease-in-out infinite;
+}
 
-    .jimu-primary-loading:before {
-      left: -19.992px;
-    }
-
-    .jimu-primary-loading:after {
-      left: 19.992px;
-      -webkit-animation-delay: 0.32s !important;
-      animation-delay: 0.32s !important;
-    }
-
-    .jimu-primary-loading:before,
-    .jimu-primary-loading:after,
-    .jimu-primary-loading {
-      background: #076fe5;
-      -webkit-animation: loading-keys-app-loading 0.8s infinite ease-in-out;
-      animation: loading-keys-app-loading 0.8s infinite ease-in-out;
-      width: 13.6px;
-      height: 32px;
-    }
-
-    .jimu-primary-loading {
-      text-indent: -9999em;
-      margin: auto;
-      position: absolute;
-      right: calc(50% - 6.8px);
-      top: calc(50% - 16px);
-      -webkit-animation-delay: 0.16s !important;
-      animation-delay: 0.16s !important;
-    }
-
-    @-webkit-keyframes loading-keys-app-loading {
-      0%, 80%, 100% {
-        opacity: .75;
-        box-shadow: 0 0 #076fe5;
-        height: 32px;
-      }
-
-      40% {
-        opacity: 1;
-        box-shadow: 0 -8px #076fe5;
-        height: 40px;
-      }
-    }
-
-    @keyframes loading-keys-app-loading {
-      0%, 80%, 100% {
-        opacity: .75;
-        box-shadow: 0 0 #076fe5;
-        height: 32px;
-      }
-
-      40% {
-        opacity: 1;
-        box-shadow: 0 -8px #076fe5;
-        height: 40px;
-      }
-    }
+@keyframes moving {
+  50% {
+    width: 100%;
+  }
+  100% {
+    width: 0;
+    right: 0;
+    left: unset;
+  }
+}
 
     .result {
       display: flex;
@@ -227,7 +192,68 @@
     .back-link:hover {
       background-color: #4F0808;
     }
+    .examples {
+      background-color: #282828;
+      color: #bbb;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .examples ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .examples ul li {
+      margin: 5px 0;
+    }
+
+    .examples ul li span {
+      color: #4F0808;
+      font-weight: bold;
+    }
+    /* Styling untuk label yang lebih menarik */
+label[for="styleSelect"] {
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #bbb;
+  text-align: left;
+}
+
+/* Styling untuk dropdown select */
+#styleSelect {
+  width: 100%;
+  padding: 10px;
+  background-color: #333;
+  color: #fff;
+  border: 2px solid #555;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: normal;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Gaya ketika dropdown di-hover */
+#styleSelect:hover {
+  background-color: #444;
+  border-color: #4F0808;
+}
+
+/* Gaya ketika dropdown di-focus */
+#styleSelect:focus {
+  outline: none;
+  background-color: #444;
+  border-color: #084cdf;
+}
+
   </style>
+  <title>Text To Image</title>
 </head>
 <body>
   <!-- Navbar -->
@@ -243,25 +269,39 @@
   <div class="container">
     <!-- Form untuk memasukkan teks -->
     <label for="textInput" class="drop-container" id="dropcontainer">
-      <span class="drop-title">Masukkan prompt teks untuk menghasilkan gambar:</span>
-      <input type="text" id="textInput" placeholder="Masukkan teks prompt..." required />
+      <input type="text" id="textInput" placeholder="prompt..." required />
+
+      <!-- Dropdown untuk memilih style -->
+      <label for="styleSelect">Pilih Style:</label>
+      <select id="styleSelect" required>
+        <option value="Cute-Anime">Cute Anime</option>
+        <option value="Studio-Ghibli">Studio Ghibli</option>
+        <option value="Anime">Anime</option>
+        <option value="Vintage-Anime">Vintage Anime</option>
+        <option value="Soft-Anime">Soft Anime</option>
+      </select>
+
       <button type="button" id="generateBtn">Generate Image</button>
     </label>
 
+    <!-- Tampilan contoh prompt -->
+    <div class="examples">
+      <ul>
+        <li><span>Example:</span> A robot exploring an alien planet with strange plants.</li>
+      </ul>
+    </div>
     <!-- Tempat hasil gambar -->
     <div class="result" id="resultDiv">
       <!-- Hasil gambar akan muncul di sini -->
     </div>
 
     <!-- Spinner loading -->
-    <div class="loader" id="loadingDiv">
-      <div class="jimu-primary-loading"></div>
-    </div>
-  </div>
+    <div class="loader" id="loadingDiv"></div>
 
   <script>
     document.getElementById('generateBtn').addEventListener('click', async function () {
       const textInput = document.getElementById('textInput').value;
+      const styleSelect = document.getElementById('styleSelect').value; // Mendapatkan nilai dari dropdown
 
       // Menghapus hasil sebelumnya sebelum memulai permintaan baru
       document.getElementById('resultDiv').innerHTML = '';
@@ -274,8 +314,8 @@
       }
 
       try {
-        // Kirimkan permintaan ke rute /rzone dengan parameter teks
-        const response = await fetch(`/rzone?text=${encodeURIComponent(textInput)}`);
+        // Kirimkan permintaan ke rute /rzone dengan parameter prompt dan style
+        const response = await fetch(`/rzone?prompt=${encodeURIComponent(textInput)}&style=${encodeURIComponent(styleSelect)}`);
 
         if (!response.ok) {
           throw new Error('Terjadi kesalahan saat mengambil gambar.');
@@ -293,7 +333,9 @@
           <a href="${imageUrl}" download="generated_image.jpg" class="back-link">Download Gambar</a>
         `;
       } catch (error) {
-        alert('Error: ' + error.message);
+        // Menampilkan error di dalam div result
+        const resultDiv = document.getElementById('resultDiv');
+        resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
       } finally {
         // Sembunyikan animasi loading setelah selesai
         document.getElementById('loadingDiv').style.display = 'none';
