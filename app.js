@@ -77,7 +77,7 @@ app.get('/rzone', async (req, res) => {
     const response = await axios.get(`https://love.neekoi.me/kivotos`, {
       params: { text }, // Kirim parameter `text`
       responseType: 'arraybuffer',
-      timeout: 100000, // Timeout 100 detik
+      timeout: 1000000, // Timeout 1000 detik
       headers: { 'User-Agent': 'Mozilla/5.0' },
     });
 
