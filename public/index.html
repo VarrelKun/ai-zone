@@ -1,340 +1,835 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+
+  <link rel="stylesheet" href="./css/styles.css" />
+
   <title>Image Enhancer</title>
+
   <style>
-  	@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
     /* Dark Mode Styling */
+
     body {
+
       font-family: Arial, sans-serif;
+
       background-color: #181818;
+
       color: #f4f4f9;
+
       margin: 0;
+
       padding: 0;
+
     }
-    
+
+
+
     h1 {
+
       text-align: center;
+
       margin-top: 20px;
+
       color: #ffffff;
-      font-family: "Montserrat", sans-serif;
+
     }
+
+
 
     /* Navbar Styling */
+
     nav {
+
       background-color: #4F0808;
+
       padding: 10px 0;
+
       position: sticky;
+
       top: 0;
+
       width: 100%;
+
       z-index: 1000;
+
     }
+
+
 
     nav ul {
+
       list-style: none;
+
       margin: 0;
+
       padding: 0;
+
       display: flex;
+
       justify-content: center;
+
     }
+
+
 
     nav ul li {
+
       margin: 0 15px;
+
     }
+
+
 
     nav ul li a {
+
       text-decoration: none;
-      font-family: "Montserrat", sans-serif;
+
       color: white;
+
       font-size: 18px;
+
       padding: 8px 16px;
+
       border-radius: 4px;
+
       transition: background-color 0.3s;
+
     }
+
+
 
     nav ul li a:hover {
+
       background-color: #555;
+
     }
+
+
 
     .container {
+
       width: 80%;
+
       margin: 0 auto;
+
       padding: 20px;
+
     }
+
+
 
     .drop-container {
+
       position: relative;
+
       display: flex;
+
       gap: 10px;
+
       flex-direction: column;
+
       justify-content: center;
+
       align-items: center;
-      height: 100px;
+
+      height: 200px;
+
       padding: 20px;
+
       border-radius: 10px;
+
       border: 2px dashed #555;
-      color: #444;
+
+      color: #bbb;
+
       cursor: pointer;
+
       transition: background .2s ease-in-out, border .2s ease-in-out;
+
+      background-color: #282828;
+
     }
 
-    .drop-container:hover,
-    .drop-container.drag-active {
-      background: #eee;
-      border-color: #111;
+
+
+    .drop-container:hover {
+
+      background: #333;
+
+      border-color: #888;
+
     }
 
-    .drop-container:hover .drop-title,
-    .drop-container.drag-active .drop-title {
-      color: #222;
-    }
+
 
     .drop-title {
-      color: #444;
+
+      color: #bbb;
+
       font-size: 20px;
+
       font-weight: bold;
+
       text-align: center;
+
       transition: color .2s ease-in-out;
+
     }
 
-    input[type=file] {
-      width: 350px;
-      max-width: 100%;
-      color: #444;
-      padding: 5px;
-      background: #fff;
-      border-radius: 10px;
-      border: 1px solid #555;
-    }
 
-    input[type=file]::file-selector-button {
-      margin-right: 20px;
-      border: none;
-      background: #CB0F0F;
+
+    button {
+
+      background-color: #4F0808;
+
+      color: white;
+
       padding: 10px 20px;
-      border-radius: 10px;
-      color: #fff;
+
+      border: none;
+
+      border-radius: 4px;
+
       cursor: pointer;
-      transition: background .2s ease-in-out;
+
+      font-size: 16px;
+
     }
 
-    input[type=file]::file-selector-button:hover {
-      background: #4F0808;
+
+
+    button:hover {
+
+      background-color: #CB0F0F;
+
     }
+
+
 
     /* Modal Styling */
+
     .modal {
+
       display: none;
+
       position: fixed;
+
       z-index: 1;
+
       left: 0;
+
       top: 0;
+
       width: 100%;
+
       height: 100%;
+
       background-color: rgba(0, 0, 0, 0.4);
+
       justify-content: center;
+
       align-items: center;
+
     }
+
+
 
     .modal-content {
+
       background-color: #282828;
+
       padding: 20px;
+
       border-radius: 5px;
+
       width: 80%;
+
       max-width: 500px;
+
       color: white;
+
       text-align: center;
+
     }
+
+
 
     .close-btn {
+
       color: white;
+
       background-color: #CB0F0F;
+
       padding: 10px;
+
       border-radius: 5px;
+
       cursor: pointer;
+
       border: none;
+
     }
+
+
 
     .close-btn:hover {
+
       background-color: #4F0808;
+
     }
 
-    /* From Uiverse.io by satyamchaudharydev */ 
-.loader {
-  display: none;
-  --height-of-loader: 4px;
-  --loader-color: #0071e2;
-  width: 130px;
-  height: var(--height-of-loader);
-  border-radius: 30px;
-  background-color: rgba(0,0,0,0.2);
-  position: absolute; /* Change to absolute positioning */
-  top: 50%; /* Position vertically in the center */
-  left: 50%; /* Position horizontally in the center */
-  transform: translate(-50%, -50%); /* Adjust for exact centering */
-}
 
-.loader::before {
-  content: "";
-  position: absolute;
-  background: var(--loader-color);
-  top: 0;
-  left: 0;
-  width: 0%;
-  height: 100%;
-  border-radius: 30px;
-  animation: moving 1s ease-in-out infinite;
-}
 
-@keyframes moving {
-  50% {
-    width: 100%;
+    .loader {
+
+      display: none;
+
+      position: relative;
+
+      margin-top: 20px;
+
+    }
+
+
+
+    .jimu-primary-loading:before,
+
+    .jimu-primary-loading:after {
+
+      position: absolute;
+
+      top: 0;
+
+      content: '';
+
+    }
+
+
+
+    .jimu-primary-loading:before {
+
+      left: -19.992px;
+
+    }
+
+
+
+    .jimu-primary-loading:after {
+
+      left: 19.992px;
+
+      -webkit-animation-delay: 0.32s !important;
+
+      animation-delay: 0.32s !important;
+
+    }
+
+
+
+    .jimu-primary-loading:before,
+
+    .jimu-primary-loading:after,
+
+    .jimu-primary-loading {
+
+      background: #076fe5;
+
+      -webkit-animation: loading-keys-app-loading 0.8s infinite ease-in-out;
+
+      animation: loading-keys-app-loading 0.8s infinite ease-in-out;
+
+      width: 13.6px;
+
+      height: 32px;
+
+    }
+
+
+
+    .jimu-primary-loading {
+
+      text-indent: -9999em;
+
+      margin: auto;
+
+      position: absolute;
+
+      right: calc(50% - 6.8px);
+
+      top: calc(50% - 16px);
+
+      -webkit-animation-delay: 0.16s !important;
+
+      animation-delay: 0.16s !important;
+
+    }
+
+
+
+    @-webkit-keyframes loading-keys-app-loading {
+
+      0%, 80%, 100% {
+
+        opacity: .75;
+
+        box-shadow: 0 0 #076fe5;
+
+        height: 32px;
+
+      }
+
+
+
+      40% {
+
+        opacity: 1;
+
+        box-shadow: 0 -8px #076fe5;
+
+        height: 40px;
+
+      }
+
+    }
+
+
+
+    @keyframes loading-keys-app-loading {
+
+      0%, 80%, 100% {
+
+        opacity: .75;
+
+        box-shadow: 0 0 #076fe5;
+
+        height: 32px;
+
+      }
+
+
+
+      40% {
+
+        opacity: 1;
+
+        box-shadow: 0 -8px #076fe5;
+
+        height: 40px;
+
+      }
+
+    }
+
+    /* Animasi untuk popup modal menggunakan transform */
+
+@keyframes transformIn {
+
+  0% {
+
+    opacity: 0;
+
+    transform: translateY(30px); /* Modal muncul dari bawah */
+
   }
 
   100% {
-    width: 0;
-    right: 0;
-    left: unset;
+
+    opacity: 1;
+
+    transform: translateY(0); /* Modal berada di posisi normal */
+
   }
+
 }
 
-    .result {
+
+
+@keyframes transformOut {
+
+  0% {
+
+    opacity: 1;
+
+    transform: translateY(0); /* Modal berada di posisi normal */
+
+  }
+
+  100% {
+
+    opacity: 0;
+
+    transform: translateY(-30px); /* Modal bergerak ke atas dan menghilang */
+
+  }
+
+}
+
+
+
+/* Modal Styling */
+
+.modal {
+
+  display: none;
+
+  position: fixed;
+
+  z-index: 1;
+
+  left: 0;
+
+  top: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  background-color: rgba(0, 0, 0, 0.4);
+
+  justify-content: center;
+
+  align-items: center;
+
+  animation: transformIn 0.5s ease-out; /* Animasi transformIn saat muncul */
+
+}
+
+
+
+/* Ketika modal ditutup */
+
+.modal.fade-out {
+
+  animation: transformOut 0.5s ease-out forwards; /* Animasi transformOut saat ditutup */
+
+}
+
+
+
+/* Konten Modal */
+
+.modal-content {
+
+  background-color: #282828;
+
+  padding: 20px;
+
+  border-radius: 5px;
+
+  width: 80%;
+
+  max-width: 500px;
+
+  color: white;
+
+  text-align: center;
+
+}
+
+.result {
+
       display: flex;
+
       justify-content: center;
+
       flex-direction: column;
+
       align-items: center;
+
       margin-top: 20px;
+
     }
+
+
 
     .result img {
+
       max-width: 100%;
+
       height: auto;
+
       border-radius: 8px;
+
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+
       margin-top: 20px;
+
     }
+
+
 
     .back-link {
+
       display: inline-block;
+
       margin-top: 20px;
+
       padding: 10px 15px;
+
       background-color: #CB0F0F;
+
       color: white;
+
       text-decoration: none;
+
       border-radius: 4px;
+
     }
+
+
 
     .back-link:hover {
+
       background-color: #4F0808;
+
     }
+
   </style>
+
 </head>
+
 <body>
+
   <!-- Navbar -->
-<nav>
+
+  <nav>
+
     <ul>
+
       <li><a href="https://redzone.web.id">Gallery</a></li>
+
       <li><a href="/zoneimg">Zoneimg</a></li>
+
     </ul>
+
   </nav>
 
-  <h1>Redzöne Generate IMG</h1>
+
+
+  <h1>Redzöne Enhancer</h1>
+
+
 
   <div class="container">
-    <label for="fileInput" class="drop-container" id="dropcontainer">
-      <span class="drop-title">Drop files here</span>
-      or
-      <input type="file" id="fileInput" accept="image/*" required>
-    </label>
+
+    <form id="uploadForm" enctype="multipart/form-data">
+
+      <label for="file" class="drop-container" id="dropcontainer">
+
+        <span class="drop-title">Drop files here</span>
+
+        or
+
+        <input type="file" name="file" required id="fileInput">
+
+        <button type="submit" id="enhanceBtn">Enhance</button>
+
+      </label>
+
+    </form>
+
+    
 
     <div class="result" id="resultDiv">
+
       <!-- Hasil gambar yang ditingkatkan akan tampil di sini -->
+
     </div>
 
-    <!-- loading -->
-<div class="loader" id="loadingDiv"></div>
 
-  <!-- Popup Modal -->
-  <div id="popupModal" class="modal">
-    <div class="modal-content">
-      <h2>Welcome to AIzöne!</h2>
-      <img src="https://files.catbox.moe/ajofxi.png" width="150" height="150" alt="Rboyz icon">
-      <p>Gunain platform ini dengan bijak y nyet!</p>
-      <button class="close-btn" id="closeModalBtn">Close</button>
+
+    <!-- Spinner loading -->
+
+    <div class="loader" id="loadingDiv">
+
+      <div class="jimu-primary-loading"></div>
+
     </div>
+
   </div>
 
+
+
+  <!-- Popup Modal -->
+
+  <div id="popupModal" class="modal">
+
+    <div class="modal-content">
+
+      <h2>Welcome to AIzöne!</h2>
+
+      <img src="https://files.catbox.moe/ajofxi.png" width="150" height="150" alt="Rboyz icon">
+
+      <p>Gunain platform ini dengan bijak y nyet!</p>
+
+      <button class="close-btn" id="closeModalBtn">Close</button>
+
+    </div>
+
+  </div>
+
+
+
   <script>
+
     // Display the popup modal on page load
-    window.onload = function() {
-      const modal = document.getElementById('popupModal');
-      modal.style.display = 'flex'; // Show the modal
-      modal.classList.remove('fade-out'); // Ensure fadeOut animation is reset
-    };
 
-    // Close the popup when user clicks on the close button
-    document.getElementById('closeModalBtn').addEventListener('click', function() {
-      const modal = document.getElementById('popupModal');
-      modal.classList.add('fade-out'); // Trigger fadeOut animation
-      setTimeout(function() {
-        modal.style.display = 'none';
-      }, 500); // Sesuaikan durasi ini dengan durasi animasi fadeOut
-    });
+    // Display the popup modal on page load
 
-    // Menangani perubahan pada input file dan mengirimkan file secara otomatis
-    document.getElementById('fileInput').addEventListener('change', async function (e) {
-  const fileInput = e.target;
-  const formData = new FormData();
+window.onload = function() {
 
-  // Clear previous result if a new file is selected
-  const resultDiv = document.getElementById('resultDiv');
-  resultDiv.innerHTML = ''; // Clear the previous result
-  
-  if (fileInput.files.length === 0) {
-    alert("Pilih file gambar terlebih dahulu.");
-    return;
-  }
+  const modal = document.getElementById('popupModal');
 
-  formData.append('file', fileInput.files[0]);
+  modal.style.display = 'flex'; // Show the modal
 
-  // Show loading animation
-  document.getElementById('loadingDiv').style.display = 'block';
+  modal.classList.remove('fade-out'); // Ensure fadeOut animation is reset
 
-  try {
-    // Send file to the server
-    const response = await fetch('/upload', {
-      method: 'POST',
-      body: formData
-    });
+};
 
-    if (!response.ok) {
-      throw new Error('Terjadi kesalahan saat mengunggah gambar.');
-    }
 
-    const result = await response.json();
 
-    if (result.success && result.enhancedImageUrl) {
-      // Display the enhanced image
-      resultDiv.innerHTML = `
-        <h3>Result:</h3>
-        <img src="${result.enhancedImageUrl}" alt="Enhanced Image" id="enhancedImage">
-        <br>
-        <a href="${result.enhancedImageUrl}" download="enhanced_redzone.jpg" class="back-link">Download Gambar</a>
-      `;
-    } else {
-      throw new Error('Gambar tidak dapat diproses.');
-    }
-  } catch (error) {
-    alert('Error: ' + error.message);
-  } finally {
-    // Hide the loading animation after the process is finished
-    document.getElementById('loadingDiv').style.display = 'none';
-  }
+// Close the popup when user clicks on the close button
+
+document.getElementById('closeModalBtn').addEventListener('click', function() {
+
+  const modal = document.getElementById('popupModal');
+
+  modal.classList.add('fade-out'); // Trigger fadeOut animation
+
+  // Menunggu animasi selesai sebelum menyembunyikan modal
+
+  setTimeout(function() {
+
+    modal.style.display = 'none';
+
+  }, 500); // Sesuaikan durasi ini dengan durasi animasi fadeOut
+
 });
 
+
+
+
+
+    // Menangani form submission menggunakan AJAX
+
+    document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+
+      e.preventDefault(); // Mencegah reload halaman
+
+
+
+      const formData = new FormData();
+
+      const fileInput = document.getElementById('fileInput');
+
+      const enhanceBtn = document.getElementById('enhanceBtn');
+
+
+
+      // Memastikan file dipilih
+
+      if (fileInput.files.length === 0) {
+
+        alert("Pilih file gambar terlebih dahulu.");
+
+        return;
+
+      }
+
+
+
+      formData.append('file', fileInput.files[0]);
+
+
+
+      // Menampilkan animasi loading
+
+      document.getElementById('loadingDiv').style.display = 'block';
+
+
+
+      // Menyembunyikan tombol Enhance setelah diklik
+
+      enhanceBtn.style.display = 'none';
+
+
+
+      try {
+
+        // Kirimkan data ke server menggunakan AJAX (fetch)
+
+        const response = await fetch('/upload', {
+
+          method: 'POST',
+
+          body: formData
+
+        });
+
+
+
+        if (!response.ok) {
+
+          throw new Error('Terjadi kesalahan saat mengunggah gambar.');
+
+        }
+
+
+
+        const result = await response.json();
+
+        
+
+        if (result.success && result.enhancedImageUrl) {
+
+          // Tampilkan gambar yang sudah diproses
+
+          const resultDiv = document.getElementById('resultDiv');
+
+          resultDiv.innerHTML = `
+
+            <h3>Result:</h3>
+
+            <img src="${result.enhancedImageUrl}" alt="Enhanced Image" id="enhancedImage">
+
+            <br>
+
+            <a href="${result.enhancedImageUrl}" download="enhanced_redzone.jpg" class="back-link">Download Gambar</a>
+
+          `;
+
+        } else {
+
+          throw new Error('Gambar tidak dapat diproses.');
+
+        }
+
+      } catch (error) {
+
+        alert('Error: ' + error.message);
+
+      } finally {
+
+        // Sembunyikan animasi loading setelah proses selesai
+
+        document.getElementById('loadingDiv').style.display = 'none';
+
+      }
+
+    });
+
   </script>
+
 </body>
+
 </html>
