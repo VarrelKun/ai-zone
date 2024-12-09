@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const path = require('path');
+const fs = require('fs');
 const multer = require('multer');
 const FormData = require('form-data');
 
@@ -51,7 +52,6 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     const enhanceResponse = await axios.get(enhanceUrl, {
       responseType: 'arraybuffer',
       headers: { 'User-Agent': 'Mozilla/5.0' },
-      timeout: 70000,
     });
 
     const enhancedImageUrl = `data:image/jpeg;base64,${Buffer.from(enhanceResponse.data).toString('base64')}`;
@@ -76,7 +76,6 @@ app.get('/rzone', async (req, res) => {
     const response = await axios.get(`https://love.neekoi.me/kivotos`, {
       params: { text },
       responseType: 'arraybuffer',
-      timeout: 100000,
       headers: { 'User-Agent': 'Mozilla/5.0' },
     });
 
@@ -91,6 +90,7 @@ app.get('/rzone', async (req, res) => {
     res.status(500).json({ success: false, message: 'Gagal mendapatkan gambar dari API eksternal.' });
   }
 });
+
 
 // Jalankan server (untuk lokal)
 if (process.env.NODE_ENV !== 'production') {
