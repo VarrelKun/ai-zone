@@ -74,7 +74,7 @@ app.get('/rzone', async (req, res) => {
 
   try {
     console.log(`Mengirim permintaan ke API eksternal dengan text: ${text}`);
-    const response = await axios.get(`https://love.neekoi.me/kivotos`, {
+    const response = await axios.get(`https://api.tioo.eu.org/ai/text2img`, {
       params: { text }, // Kirim parameter `text`
       responseType: 'arraybuffer',
       timeout: 100000, // Timeout 100 detik
