@@ -52,7 +52,6 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     const enhanceResponse = await axios.get(enhanceUrl, {
       responseType: 'arraybuffer',
       headers: { 'User-Agent': 'Mozilla/5.0' },
-      timeout: 70000,
     });
 
     const enhancedImageUrl = `data:image/jpeg;base64,${Buffer.from(enhanceResponse.data).toString('base64')}`;
@@ -77,7 +76,6 @@ app.get('/rzone', async (req, res) => {
     const response = await axios.get(`https://love.neekoi.me/kivotos`, {
       params: { text }, // Kirim parameter `text`
       responseType: 'arraybuffer',
-      timeout: 100000, // Timeout 100 detik
       headers: { 'User-Agent': 'Mozilla/5.0' },
     });
 
