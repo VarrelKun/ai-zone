@@ -1,0 +1,9 @@
+[build]
+  # Netlify akan mencari fungsi di folder "functions"
+  functions = "api"
+
+[[redirects]]
+  from = "/(.*)"
+  to = "/api/app.js"
+  status = 200
+  force = true
