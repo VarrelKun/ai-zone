@@ -48,40 +48,78 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     console.log('URL dari Catbox:', catboxUrl);
 
     // Panggil API eksternal
-    const enhanceUrl = `https://api.ryzendesu.vip/api/ai/remini?url=${encodeURIComponent(catboxUrl)}`;
+    const enhanceUrl = `https://skizoasia.xyz/api/remini?apikey=isaac&url=${encodeURIComponent(catboxUrl)}`;
+    console.log('Mengirim permintaan ke API eksternal:', enhanceUrl);
+
     const enhanceResponse = await axios.get(enhanceUrl, {
       responseType: 'arraybuffer',
-      headers: { 'User-Agent': 'Mozilla/5.0' },
-      timeout: 70000,
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; MyApp/1.0)' },
+      timeout: 300000, // Timeout 300 detik untuk API eksternal
     });
 
+    // Pastikan API eksternal mengembalikan gambar
+    if (!enhanceResponse.data || !Buffer.isBuffer(enhanceResponse.data)) {
+      throw new Error('Gagal menerima gambar dari API eksternal.');
+    }
+
+    // Mengirim gambar dalam bentuk base64
     const enhancedImageUrl = `data:image/jpeg;base64,${Buffer.from(enhanceResponse.data).toString('base64')}`;
 
-    res.json({ success: true, enhancedImageUrl: enhancedImageUrl });
+    // Kirimkan hasil ke client
+    res.json({
+      success: true,
+      enhancedImageUrl: enhancedImageUrl,
+    });
+
   } catch (error) {
-    console.error('Error:', error.message);
+    console.error('Error saat memproses gambar:', error.message);
+
+    // Menangani kesalahan berdasarkan status code dari API eksternal atau kesalahan DNS
+    if (error.code === 'ENOTFOUND') {
+      return res.status(500).json({ success: false, message: 'API eksternal tidak ditemukan. Pastikan domain tersedia.' });
+    }
+
+    if (error.response) {
+      // Jika ada response dari server API eksternal
+      console.error('Status Code dari API eksternal:', error.response.status);
+      if (error.response.status === 502) {
+        return res.status(502).json({ success: false, message: 'Server eksternal tidak dapat diproses. Coba lagi nanti.' });
+      }
+      // Penanganan untuk status error lain dari API eksternal
+      return res.status(error.response.status).json({ success: false, message: `Error API eksternal: ${error.response.statusText}` });
+    }
+
+    // Jika bukan error dari respons server eksternal, error lainnya
     res.status(500).json({ success: false, message: 'Gagal memproses gambar.' });
   }
 });
 
 // Endpoint untuk memanggil API eksternal
 app.get('/rzone', async (req, res) => {
-  const text = req.query.text;
+  const { prompt, style } = req.query;
 
-  if (!text) {
-    return res.status(400).json({ success: false, message: 'Parameter "text" wajib disertakan.' });
+  // Pastikan kedua parameter ada
+  if (!prompt || !style) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Parameter "prompt" dan "style" wajib disertakan.' 
+    });
   }
 
   try {
-    console.log(`Mengirim permintaan ke API eksternal dengan text: ${text}`);
-    const response = await axios.get(`https://api.tioo.eu.org/ai/text2img`, {
-      params: { text }, // Kirim parameter `text`
-      responseType: 'arraybuffer',
-      timeout: 100000, // Timeout 100 detik
-      headers: { 'User-Agent': 'Mozilla/5.0' },
+    // Kirim permintaan ke API eksternal dengan query "prompt" dan "style"
+    const response = await axios.get('https://api.ryzendesu.vip/api/ai/waifu-diff', {
+      params: {
+        prompt: prompt,
+        style: style
+      },
+      responseType: 'arraybuffer' // Mengambil respons sebagai buffer gambar
     });
 
+    // Set header untuk tipe konten gambar (image/jpeg)
     res.set('Content-Type', 'image/jpeg');
+
+    // Kirimkan gambar langsung ke klien
     res.send(response.data);
   } catch (error) {
     console.error('Error saat memanggil API eksternal:', error.message);
