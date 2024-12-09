@@ -8,7 +8,7 @@ const FormData = require('form-data');
 const app = express();
 const port = 3000;
 
-// Setup Multer untuk file upload (menggunakan memory storage)
+// Setup Multer untuk file upload
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Middleware untuk menangani permintaan JSON dan form-data
@@ -52,6 +52,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     const enhanceResponse = await axios.get(enhanceUrl, {
       responseType: 'arraybuffer',
       headers: { 'User-Agent': 'Mozilla/5.0' },
+      timeout: 70000,
     });
 
     const enhancedImageUrl = `data:image/jpeg;base64,${Buffer.from(enhanceResponse.data).toString('base64')}`;
@@ -74,26 +75,23 @@ app.get('/rzone', async (req, res) => {
   try {
     console.log(`Mengirim permintaan ke API eksternal dengan text: ${text}`);
     const response = await axios.get(`https://love.neekoi.me/kivotos`, {
-      params: { text },
+      params: { text }, // Kirim parameter `text`
       responseType: 'arraybuffer',
+      timeout: 100000, // Timeout 100 detik
       headers: { 'User-Agent': 'Mozilla/5.0' },
     });
 
     res.set('Content-Type', 'image/jpeg');
     res.send(response.data);
   } catch (error) {
-    // Log error lebih rinci
     console.error('Error saat memanggil API eksternal:', error.message);
     if (error.response) {
       console.error('Status API eksternal:', error.response.status);
-      console.error('Headers API eksternal:', error.response.headers);
-      console.error('Data API eksternal:', error.response.data.toString());
+      console.error('Data API eksternal:', error.response.data);
     }
     res.status(500).json({ success: false, message: 'Gagal mendapatkan gambar dari API eksternal.' });
   }
 });
-
-
 
 // Jalankan server (untuk lokal)
 if (process.env.NODE_ENV !== 'production') {
