@@ -82,14 +82,17 @@ app.get('/rzone', async (req, res) => {
     res.set('Content-Type', 'image/jpeg');
     res.send(response.data);
   } catch (error) {
+    // Log error lebih rinci
     console.error('Error saat memanggil API eksternal:', error.message);
     if (error.response) {
       console.error('Status API eksternal:', error.response.status);
-      console.error('Data API eksternal:', error.response.data);
+      console.error('Headers API eksternal:', error.response.headers);
+      console.error('Data API eksternal:', error.response.data.toString());
     }
     res.status(500).json({ success: false, message: 'Gagal mendapatkan gambar dari API eksternal.' });
   }
 });
+
 
 
 // Jalankan server (untuk lokal)
