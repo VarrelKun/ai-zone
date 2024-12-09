@@ -14,6 +14,15 @@ app.use(express.urlencoded({ extended: true }));
 // Serve file statis dari folder "public"
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Route untuk halaman utama
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/zoneimg', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'zone.html'));
+});
+
 // Route untuk upload file
 app.post('/upload', upload.single('file'), async (req, res) => {
   if (!req.file) {
