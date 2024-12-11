@@ -1,346 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-  @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
-    /* Dark Mode Styling */
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #181818;
-      color: #f4f4f9;
-      margin: 0;
-      padding: 0;
-    }
-
-    h1 {
-      text-align: center;
-      font-family: "Montserrat", sans-serif;
-      margin-top: 20px;
-      color: #ffffff;
-    }
-
-    /* Navbar Styling */
-    nav {
-      background-color: #4F0808;
-      padding: 10px 0;
-      position: sticky;
-      top: 0;
-      width: 100%;
-      z-index: 1000;
-    }
-
-    nav ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-    }
-
-    nav ul li {
-      margin: 0 15px;
-    }
-
-    nav ul li a {
-      text-decoration: none;
-      font-family: "Montserrat", sans-serif;
-      color: white;
-      font-size: 18px;
-      padding: 8px 16px;
-      border-radius: 4px;
-      transition: background-color 0.3s;
-    }
-
-    nav ul li a:hover {
-      background-color: #555;
-    }
-
-    /* Rest of your styles */
-    .container {
-      width: 80%;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .drop-container {
-      position: relative;
-      display: flex;
-      gap: 10px;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 200px;
-      padding: 20px;
-      border-radius: 10px;
-      border: 2px dashed #555;
-      color: #bbb;
-      cursor: pointer;
-      transition: background .2s ease-in-out, border .2s ease-in-out;
-      background-color: #282828;
-    }
-
-    .drop-container:hover {
-      background: #333;
-      border-color: #888;
-    }
-
-    .drop-container:hover .drop-title {
-      color: #fff;
-    }
-
-    .drop-title {
-      color: #bbb;
-      font-size: 20px;
-      font-weight: bold;
-      text-align: center;
-      transition: color .2s ease-in-out;
-    }
-
-    input[type="text"] {
-      width: 80%;
-      padding: 10px;
-      margin: 10px 0;
-      background-color: #333;
-      border: 2px solid #555;
-      color: #fff;
-      border-radius: 4px;
-      font-size: 16px;
-    }
-
-    input[type="text"]:focus {
-      border-color: #084cdf;
-    }
-
-    button {
-      background-color: #4F0808;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    button:hover {
-      background-color: #CB0F0F;
-    }
-
-    /* Animasi loading */
-    .loader {
-  display: none;
-  --height-of-loader: 4px;
-  --loader-color: #0071e2;
-  width: 130px;
-  height: var(--height-of-loader);
-  border-radius: 30px;
-  background-color: rgba(0, 0, 0, 0.2);
-  position: relative; /* Ubah ke relative */
-  margin: 20px auto 0; /* Berikan jarak dengan margin */
-}
-
-.loader::before {
-  content: "";
-  position: absolute;
-  background: var(--loader-color);
-  top: 0;
-  left: 0;
-  width: 0%;
-  height: 100%;
-  border-radius: 30px;
-  animation: moving 1s ease-in-out infinite;
-}
-
-@keyframes moving {
-  50% {
-    width: 100%;
-  }
-  100% {
-    width: 0;
-    right: 0;
-    left: unset;
-  }
-}
-
-    .result {
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 20px;
-    }
-
-    .result img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-      margin-top: 20px;
-    }
-
-    .back-link {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px 15px;
-      background-color: #CB0F0F;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-    }
-
-    .back-link:hover {
-      background-color: #4F0808;
-    }
-    .examples {
-      background-color: #282828;
-      color: #bbb;
-      padding: 10px 15px;
-      border-radius: 8px;
-      margin-top: 15px;
-      font-size: 14px;
-    }
-
-    .examples ul {
-      list-style-type: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .examples ul li {
-      margin: 5px 0;
-    }
-
-    .examples ul li span {
-      color: #4F0808;
-      font-weight: bold;
-    }
-    /* Styling untuk label yang lebih menarik */
-label[for="styleSelect"] {
-  display: block;
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 8px;
-  color: #bbb;
-  text-align: left;
-}
-
-/* Styling untuk dropdown select */
-#styleSelect {
-  width: 100%;
-  padding: 10px;
-  background-color: #333;
-  color: #fff;
-  border: 2px solid #555;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: normal;
-  cursor: pointer;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-/* Gaya ketika dropdown di-hover */
-#styleSelect:hover {
-  background-color: #444;
-  border-color: #4F0808;
-}
-
-/* Gaya ketika dropdown di-focus */
-#styleSelect:focus {
-  outline: none;
-  background-color: #444;
-  border-color: #084cdf;
-}
-
-  </style>
-  <title>Text To Image</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Image Generator</title>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav>
-    <ul>
-      <li><a href="https://redzone.web.id">Gallery</a></li>
-      <li><a href="/">Enhancer</a></li>
-    </ul>
-  </nav>
+    <h1>Text to Image Generator</h1>
 
-  <h1>Redzöne Generate IMG</h1>
+    <label for="inputText">Enter text:</label>
+    <input type="text" id="inputText" placeholder="Type your text here">
+    
+    <button onclick="generateImage()">Generate Image</button>
 
-  <div class="container">
-    <!-- Form untuk memasukkan teks -->
-    <label for="textInput" class="drop-container" id="dropcontainer">
-      <input type="text" id="textInput" placeholder="prompt..." required />
-
-      <!-- Dropdown untuk memilih style -->
-      <label for="styleSelect">Pilih Style:</label>
-      <select id="styleSelect" required>
-        <option value="Cute-Anime">Cute Anime</option>
-        <option value="Studio-Ghibli">Studio Ghibli</option>
-        <option value="Anime">Anime</option>
-        <option value="Vintage-Anime">Vintage Anime</option>
-        <option value="Soft-Anime">Soft Anime</option>
-      </select>
-
-      <button type="button" id="generateBtn">Generate Image</button>
-    </label>
-
-    <!-- Tampilan contoh prompt -->
-    <div class="examples">
-      <ul>
-        <li><span>Example:</span> A robot exploring an alien planet with strange plants.</li>
-      </ul>
-    </div>
-    <!-- Tempat hasil gambar -->
-    <div class="result" id="resultDiv">
-      <!-- Hasil gambar akan muncul di sini -->
+    <div id="imageContainer" style="margin-top: 20px;">
+        <p>Generated Image will appear here:</p>
+        <img id="generatedImage" src="" alt="Generated Image" style="max-width: 100%; height: auto;">
     </div>
 
-    <!-- Spinner loading -->
-    <div class="loader" id="loadingDiv"></div>
-
-  <script>
-    document.getElementById('generateBtn').addEventListener('click', async function () {
-      const textInput = document.getElementById('textInput').value;
-      const styleSelect = document.getElementById('styleSelect').value; // Mendapatkan nilai dari dropdown
-
-      // Menghapus hasil sebelumnya sebelum memulai permintaan baru
-      document.getElementById('resultDiv').innerHTML = '';
-      document.getElementById('loadingDiv').style.display = 'block'; // Menampilkan loading spinner
-
-      if (!textInput) {
-        alert("Masukkan prompt terlebih dahulu.");
-        document.getElementById('loadingDiv').style.display = 'none'; // Menyembunyikan spinner jika tidak ada teks
-        return;
-      }
-
-      try {
-        // Kirimkan permintaan ke rute /rzone dengan parameter prompt dan style
-        const response = await fetch(`/rzone?prompt=${encodeURIComponent(textInput)}&style=${encodeURIComponent(styleSelect)}`);
-
-        if (!response.ok) {
-          throw new Error('Terjadi kesalahan saat mengambil gambar.');
+    <script>
+        function generateImage() {
+            // Get the text entered by the user
+            var inputText = document.getElementById("inputText").value;
+            
+            // Check if inputText is not empty
+            if (inputText.trim() === "") {
+                alert("Please enter some text.");
+                return;
+            }
+            
+            // Construct the URL with the entered text
+            var apiUrl = "https://love.neekoi.me/kivotos?text=" + encodeURIComponent(inputText);
+            
+            // Fetch the image from the API
+            fetch(apiUrl)
+                .then(response => response.blob())  // Get the image as a Blob
+                .then(imageBlob => {
+                    // Create a URL for the image
+                    var imageUrl = URL.createObjectURL(imageBlob);
+                    
+                    // Set the image source to the fetched image URL
+                    var imgElement = document.getElementById("generatedImage");
+                    imgElement.src = imageUrl;
+                })
+                .catch(error => {
+                    console.error("Error fetching the image:", error);
+                    alert("Something went wrong. Please try again.");
+                });
         }
-
-        const blob = await response.blob();
-
-        // Menampilkan hasil gambar
-        const imageUrl = URL.createObjectURL(blob);
-        const resultDiv = document.getElementById('resultDiv');
-        resultDiv.innerHTML = `
-          <h3>Result:</h3>
-          <img src="${imageUrl}" alt="Generated Image" id="generatedImage">
-          <br>
-          <a href="${imageUrl}" download="generated_image.jpg" class="back-link">Download Gambar</a>
-        `;
-      } catch (error) {
-        // Menampilkan error di dalam div result
-        const resultDiv = document.getElementById('resultDiv');
-        resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
-      } finally {
-        // Sembunyikan animasi loading setelah selesai
-        document.getElementById('loadingDiv').style.display = 'none';
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
