@@ -51,8 +51,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     const enhanceUrl = `https://skizoasia.xyz/api/remini?apikey=isaac&url=${encodeURIComponent(catboxUrl)}`;
     const enhanceResponse = await axios.get(enhanceUrl, {
       responseType: 'arraybuffer',
-      headers: { 'User-Agent': 'Mozilla/5.0' },
-      timeout: 70000,
+      headers: { 'User-Agent': 'okhttp/4.9.3',
+      Connection: 'keep-alive'}
     });
 
     const enhancedImageUrl = `data:image/jpeg;base64,${Buffer.from(enhanceResponse.data).toString('base64')}`;
